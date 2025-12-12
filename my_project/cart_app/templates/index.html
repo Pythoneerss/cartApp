@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+ <h1>ESP32 LED Status Display</h1>
+
+
+<button onclick="sendCommand(true)">Turn OFF Blink</button>
+<button onclick="sendCommand(false)">Turn ON Blink</button>
+
+<p id="msg"></p>
+
+<script>
+function sendCommand(state) {
+
+    fetch("/esp32/set-blink/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ "status": state })
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById("msg").innerText =
+            "Command updated: " + data.status;
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + "=")) {
+            cookieValue = cookie.substring(name.length + 1);
+            break;
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+</body>
+</html>
